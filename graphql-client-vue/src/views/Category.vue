@@ -17,7 +17,7 @@
               :key="item.name"
             >
             <span>
-              {{ item.name }} ({{ item.id }})
+              [{{ item.id }}]{{ item.name }} ({{ item.num }})
             </span></li>
           </ul>
         </div>

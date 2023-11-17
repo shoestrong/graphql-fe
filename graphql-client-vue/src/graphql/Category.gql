@@ -2,5 +2,6 @@ query getAllCategories {
   getCategories {
     id
     name
+    num
   }
 }

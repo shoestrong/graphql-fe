@@ -12,7 +12,7 @@
       </select>
     </div>
     <div class="form-group">
-      <input class="btn btn-primary" type="submit"/>
+      <input class="btn btn-primary" type="submit" value="Add Product"/>
     </div>
   </form>
 </template>

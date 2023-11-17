@@ -1,14 +1,14 @@
 const graphql = require('graphql')
-const {GraphQLObjectType, GraphQLString, GraphQLSchema, GraphQLList, GraphQLNonNull} = graphql
+const {GraphQLObjectType, GraphQLString, GraphQLInt,  GraphQLSchema, GraphQLList, GraphQLNonNull} = graphql
 
 const { CategoryModel, ProductModel } = require('./model')
 
-const isMock = false
+const isMock = true
 
 const categories = [
-  { id: '1', name: '图书' },
-  { id: '2', name: '数码' },
-  { id: '3', name: '食品' }
+  { id: '1', name: '图书', num: 0 },
+  { id: '2', name: '数码', num: 0 },
+  { id: '3', name: '食品', num: 0 }
 ]
 
 const products = [
@@ -16,7 +16,7 @@ const products = [
   { id: '2', name: '西游记', category: '1' },
   { id: '3', name: '水浒传', category: '1' },
   { id: '4', name: '三国演义', category: '1' },
-  { id: '2', name: 'iPhone', category: '2' }
+  { id: '5', name: 'iPhone', category: '2' }
 ]
 
 const Product = new GraphQLObjectType({
@@ -42,6 +42,7 @@ const Category = new GraphQLObjectType({
   fields: () => ({
     id: { type: GraphQLString },
     name: { type: GraphQLString },
+    num: { type: GraphQLInt },
     products: {
       type: new GraphQLList(Product),
       resolve(parent) {
@@ -80,7 +81,12 @@ const RootQuery = new GraphQLObjectType({
       args: {},
       resolve(parent, args) {
         if (isMock) {
-          return categories
+          const list = categories.map(r => {
+            const n = products.filter(v => v.category === r.id)
+            r.num = n.length
+            return r
+          })
+          return list
         } else {
           return CategoryModel.find()
         }
@@ -150,14 +156,33 @@ const RootMutation = new GraphQLObjectType({
       },
       resolve(parent, args) {
         if (isMock) {
-          args.id = products.length + 1 + ''
+          const productIds = products.map(v => v.id)
+          args.id = +Math.max(...productIds) + 1 + ''
           products.push(args)
           return args
         } else {
           return ProductModel.create(args)
         }
       }
-    }
+    },
+    deleteProduct: {
+      type: Product,
+      description: '删除产品，参数id',
+      args: {
+        id: {
+          type: GraphQLString
+        }
+      },
+      resolve(parent, args) {
+        if (isMock) {
+          const i = products.findIndex(v => v.id === args.id)
+          products.splice(i, 1)
+          return products.find(item => item.id === args.id)
+        } else {
+          return ProductModel.findById(args.id)
+        }
+      }
+    },
   }
 })
 

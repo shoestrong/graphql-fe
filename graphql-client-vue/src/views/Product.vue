@@ -37,7 +37,7 @@
       <div class="col-md-6">
         <div class="panel panel-default" style="padding: 20px">
           <div class="text-center">
-            <ProductDetail :product="product"/>
+            <ProductDetail :product="product" @delete="handleDeleteProduct"/>
           </div>
         </div>
       </div>
@@ -101,7 +101,6 @@ export default {
           id
         },
         update: (store, { data }) => {
-          console.log(data.getProduct)
           this.product = data.getProduct
         }
       });
@@ -112,11 +111,14 @@ export default {
         mutation: fetchDataGql,
         variables: {},
         update: (store, { data }) => {
-          console.log(data)
           vm.products = data.getProducts;
           vm.categories = data.getCategories;
         }
       });
+    },
+    handleDeleteProduct() {
+      this.handleProductList()
+      this.product = null
     }
   },
   apollo: {

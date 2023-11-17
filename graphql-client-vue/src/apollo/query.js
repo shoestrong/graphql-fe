@@ -55,3 +55,11 @@ mutation($name:String!,$categoryId: String!){
   }
 }
 `
+export const DELETE_PRODUCT = gql`
+mutation($id: String!){
+  deleteProduct(id: $id) {
+    id,
+    name
+  }
+}
+`
